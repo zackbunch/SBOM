@@ -1,37 +1,37 @@
 
-# define the name of the virtual environment directory
+# SHELL := /usr/bin/env bash
 VENV := venv
+VENV_ACTIVATE := $(VENV)/bin/activate
+ACTIVATE_ENV = source $(VENV)/bin/activate
+PYTHON := $(VENV)/bin/python3
+PIP := $(VENV)/bin/pip
 
-# default target, when make executed without arguments
 all: venv
-	
-
-$(VENV)/bin/activate: requirements.txt
-	python3 -m venv $(VENV)
-	./$(VENV)/bin/pip install -r requirements.txt --no-cache-dir
 
 # venv is a shortcut target
-venv: $(VENV)/bin/activate
+venv:$(VENV)/bin/activate
+	
+$(VENV_ACTIVATE): requirements.txt
+	python3 -m venv $(VENV)
+	./$(PIP) install -r requirements.txt --no-cache-dir
 
-run: venv
-	./$(VENV)/bin/python3 sysk.py
+run:
+	$(ACTIVATE_ENV) && ./$(PYTHON) sysk.py
 
 lint:
-	python3 -m pylint --version
-	python3 -m pylint src
+	$(PYTHON) -m pylint src
 
+format:
+	$(PYTHON) -m black src
+	$(PYTHON) -m isort src 
 
-test:
-	python3 -m pytest --version
-	python3 -m pytest tests
-
-black:
-	python3 -m black --version
-	python3 -m black src
+test: $(ACTIVATE_ENV)
+	$(PYTHON) -m pytest src/tests
 
 clean:
 	rm -rf $(VENV)
+	find . -type f -name '*.json' -delete
 	find . -type f -name '*.pyc' -delete
 	find . -type d -name __pycache__ -delete
 
-.PHONY: all venv run clean lint black test
+.PHONY: all venv run clean lint format test

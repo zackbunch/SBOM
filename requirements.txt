@@ -1,5 +1,7 @@
-tqdm
-requests
-pytest
-pylint
 black
+lint
+pylint
+isort
+pytest
+tqdm
+jsonschema
