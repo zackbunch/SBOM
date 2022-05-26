@@ -28,10 +28,15 @@ format:
 test: $(ACTIVATE_ENV)
 	$(PYTHON) -m pytest src/tests
 
+build:
+	python3 -m pip install --upgrade build
+	python3 -m build
+
+
 clean:
 	rm -rf $(VENV)
 	find . -type f -name '*.json' -delete
 	find . -type f -name '*.pyc' -delete
 	find . -type d -name __pycache__ -delete
 
-.PHONY: all venv run clean lint format test
+.PHONY: all venv run clean lint format test build

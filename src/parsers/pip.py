@@ -2,11 +2,20 @@ import json
 import subprocess as sp
 from email.parser import BytesHeaderParser
 
+import pandas as pd
 from tqdm import tqdm
 
 
 class PIP:
-    def get_pip_package_json(self):
+    @staticmethod
+    def get_pip_package_json():
+        """Get Package Name and Version from the system by
+        executing the command:
+             pip3 list --local --format=json
+
+        Returns:
+            json: Object containing Name and Version
+        """
         cmd_results = sp.run(
             ["pip3", "list", "--local", "--format=json"],
             stdout=sp.PIPE,
@@ -30,18 +39,17 @@ class PIP:
             content.append(str_dict)
         return content
 
-    def write_json(self, file_name="src/data/pip_detailed.json"):
-        with open(file_name, "w+") as json_file:
+    def json_to_df(self, json_str):
+        pip_df = pd.DataFrame.from_dict(json_str)
+        return pip_df
+
+    def generate_sbom(self, file_name="src/data/pip_detailed.json"):
+        with open(file_name, "w+", encoding="UTF-8") as json_file:
             data = self.get_detailed_pip()
-            json.dump(data, json_file)
+            json.dump(data, json_file, indent=3)
 
-
-
-
-
-
-
-
-
-
-
+    @staticmethod
+    def is_approved_version():
+        """Validates if installed software version is
+        on approved product list"""
+        pass
